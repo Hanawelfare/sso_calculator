@@ -440,75 +440,157 @@ function calculatePension() {
 
 function updateUI(data) {
     // 1. Update metric values
-    resStandardPension.textContent = formatCurrency(data.standardPension);
-    resStandardPct.textContent = `${data.pensionPct.toFixed(1)}%`;
-    resStandardAvg.textContent = formatCurrency(data.avgSalary);
+    const stdCard = document.querySelector('.standard-card');
+    const lblStdPct = document.getElementById('lbl-standard-pct');
+    const lblStdAvg = document.getElementById('lbl-standard-avg');
 
-    resM39APension.textContent = formatCurrency(data.m39APension);
-    resM39APct.textContent = `${data.m39APct.toFixed(1)}%`;
-    resM39ABase.textContent = formatCurrency(data.avgSalary);
+    if (data.totalMonths < 180) {
+        stdCard.classList.add('warning-card');
+        stdCard.querySelector('.metric-label').innerHTML = `<span class="text-danger"><i class="fas fa-exclamation-circle"></i> จะได้รับเป็นเงินบำเหน็จชราภาพ (จ่ายครั้งเดียว)</span>`;
+        resStandardPension.textContent = "เงินบำเหน็จ";
+        resStandardPension.style.fontSize = "1.8rem";
+        
+        if (lblStdPct) lblStdPct.textContent = "สิทธิที่จะได้รับ:";
+        resStandardPct.textContent = data.totalMonths >= 12 ? "สะสมคืน + สมทบ + ดอกเบี้ย" : "คืนเฉพาะส่วนที่สะสม";
+        
+        if (lblStdAvg) lblStdAvg.textContent = "เกณฑ์คำนวณ:";
+        resStandardAvg.textContent = "ตามเกณฑ์ประกันสังคม";
+        resStandardAvg.style.fontSize = "0.85rem";
+    } else {
+        stdCard.classList.remove('warning-card');
+        stdCard.querySelector('.metric-label').textContent = 'ได้รับเงินบำนาญชราภาพเมื่ออายุครบ 55 ปี และสิ้นสุดการเป็นผู้ประกันตน เดือนละ';
+        resStandardPension.textContent = formatCurrency(data.standardPension);
+        resStandardPension.style.fontSize = ""; // reset
+        
+        if (lblStdPct) lblStdPct.textContent = "คิดเป็นอัตรา:";
+        resStandardPct.textContent = `${data.pensionPct.toFixed(1)}%`;
+        
+        if (lblStdAvg) lblStdAvg.textContent = "ฐานค่าจ้างเฉลี่ย:";
+        resStandardAvg.textContent = formatCurrency(data.avgSalary);
+        resStandardAvg.style.fontSize = ""; // reset
+    }
+
+    // Option A
+    const aCard = document.querySelector('.scenario-a-card');
+    const lblM39ABase = document.getElementById('lbl-m39-a-base');
+    if (data.totalMonths < 180) {
+        resM39APension.textContent = "ไม่เข้าเงื่อนไข";
+        resM39APension.style.fontSize = "1.8rem";
+        resM39APct.textContent = "0.0%";
+        resM39ABase.textContent = "-";
+        
+        if (aCard) {
+            const metricALabel = aCard.querySelector('.metric-label');
+            if (metricALabel) metricALabel.textContent = `ไม่เข้าเกณฑ์เนื่องจากส่งเงินสมทบไม่ครบ 180 งวด`;
+        }
+        if (lblM39ABase) lblM39ABase.textContent = "ฐานเงินเดือน:";
+    } else {
+        resM39APension.textContent = formatCurrency(data.m39APension);
+        resM39APension.style.fontSize = ""; // reset
+        resM39APct.textContent = `${data.m39APct.toFixed(1)}%`;
+        resM39ABase.textContent = formatCurrency(data.avgSalary);
+        
+        if (aCard) {
+            const metricALabel = aCard.querySelector('.metric-label');
+            if (metricALabel) metricALabel.textContent = `รับบำนาญแล้ว ส่ง ม.39 ต่อ ${data.m39AYears} ปี`;
+        }
+        if (lblM39ABase) lblM39ABase.textContent = "ฐานเดิมคงไว้:";
+    }
 
     // Update Option A Years label dynamically
     resM39AYearsLabel.textContent = data.m39AYears;
     barM39AYearsLabel.textContent = data.m39AYears;
     resM39AAddLabel.textContent = `รับเพิ่ม (+${(data.m39AYears * 1.5).toFixed(1)}%):`;
 
-    resM39BPension.textContent = formatCurrency(data.m39BPension);
-    resM39BPct.textContent = `${data.pensionPctB.toFixed(1)}%`;
-    resM39BAvg.textContent = formatCurrency(data.avgSalaryB);
-    resM39BYearsLabel.textContent = data.m39BYears;
-    barM39BYearsLabel.textContent = data.m39BYears;
-
-    // Dynamically adjust Option B card warning classes and labels
+    // Option B
     const bCard = document.getElementById('card-m39-b');
     const badgeB = document.getElementById('badge-m39-b');
     const lblBAvg = document.getElementById('lbl-m39-b-avg');
-    const chartGroupB = document.getElementById('chart-group-m39-b');
     const barLabelB = document.getElementById('bar-lbl-m39-b');
-    
-    if (data.m39BYears >= 5) {
-        bCard.className = 'card metric-card scenario-b-card warning-card';
-        badgeB.className = 'card-badge bg-danger';
-        badgeB.style.background = '';
-        badgeB.style.color = '';
-        badgeB.textContent = 'ม.39 (ทางเลือก B) - Trap!';
-        lblBAvg.textContent = 'ฐานลดลงเหลือ:';
-        barLabelB.innerHTML = `ม.39 (ทางเลือก B) - ส่งฐาน 4,800 ทันทีหลังออกจากงาน <span id="bar-m39-b-years-label">${data.m39BYears}</span> ปี <span class="text-danger">(Section 39 Trap)</span>`;
-    } else {
-        bCard.className = 'card metric-card scenario-b-card';
-        bCard.style.borderColor = '#f59e0b';
-        badgeB.className = 'card-badge';
-        badgeB.style.background = 'linear-gradient(135deg, #f59e0b, #d97706)';
-        badgeB.style.color = 'white';
-        badgeB.textContent = 'ม.39 (ทางเลือก B) - ฐานผสม';
-        lblBAvg.textContent = 'ฐานเฉลี่ยผสม:';
-        barLabelB.innerHTML = `ม.39 (ทางเลือก B) - ส่งฐาน 4,800 ทันทีหลังออกจากงาน <span id="bar-m39-b-years-label">${data.m39BYears}</span> ปี (ฐานเฉลี่ยผสม)`;
-    }
 
-    // Highlight card depending on totalMonths
-    const stdCard = document.querySelector('.standard-card');
-    if (data.totalMonths < 180) {
-        stdCard.classList.add('warning-card');
-        stdCard.querySelector('.metric-label').innerHTML = `<span class="text-danger"><i class="fas fa-exclamation-circle"></i> จะได้รับเป็นเงินบำเหน็จ (จ่ายครั้งเดียว)</span>`;
+    resM39BYearsLabel.textContent = data.m39BYears;
+    barM39BYearsLabel.textContent = data.m39BYears;
+    
+    if (data.totalMonthsB < 180) {
+        resM39BPension.textContent = "เงินบำเหน็จ";
+        resM39BPension.style.fontSize = "1.8rem";
+        resM39BPct.textContent = "0.0%";
+        resM39BAvg.textContent = "สะสมคืน";
+        
+        if (bCard) {
+            bCard.className = 'card metric-card scenario-b-card warning-card';
+            const metricBLabel = bCard.querySelector('.metric-label');
+            if (metricBLabel) metricBLabel.textContent = `ส่ง ม.39 ทันทีหลังออกจากงาน ${data.m39BYears} ปี (รวมแล้วไม่ครบ 180 งวด)`;
+        }
+        if (badgeB) {
+            badgeB.className = 'card-badge bg-danger';
+            badgeB.style.background = '';
+            badgeB.style.color = '';
+            badgeB.textContent = 'ม.39 (ทางเลือก B)';
+        }
+        if (lblBAvg) lblBAvg.textContent = "สิทธิที่จะได้รับ:";
+        if (barLabelB) {
+            barLabelB.innerHTML = `ม.39 (ทางเลือก B) - ส่ง ม.39 หลังออกจากงาน <span id="bar-m39-b-years-label">${data.m39BYears}</span> ปี (ไม่เกิดสิทธิบำนาญ)`;
+        }
     } else {
-        stdCard.classList.remove('warning-card');
-        stdCard.querySelector('.metric-label').textContent = 'ได้รับเงินบำนาญชราภาพเมื่ออายุครบ 55 ปี และสิ้นสุดการเป็นผู้ประกันตน เดือนละ';
+        resM39BPension.textContent = formatCurrency(data.m39BPension);
+        resM39BPension.style.fontSize = ""; // reset
+        resM39BPct.textContent = `${data.pensionPctB.toFixed(1)}%`;
+        resM39BAvg.textContent = formatCurrency(data.avgSalaryB);
+        
+        if (bCard) {
+            const metricBLabel = bCard.querySelector('.metric-label');
+            if (metricBLabel) metricBLabel.textContent = `ส่ง ม.39 ทันทีหลังออกจากงาน ${data.m39BYears} ปี`;
+        }
+
+        if (data.m39BYears >= 5) {
+            if (bCard) bCard.className = 'card metric-card scenario-b-card warning-card';
+            if (badgeB) {
+                badgeB.className = 'card-badge bg-danger';
+                badgeB.style.background = '';
+                badgeB.style.color = '';
+                badgeB.textContent = 'ม.39 (ทางเลือก B) - Trap!';
+            }
+            if (lblBAvg) lblBAvg.textContent = 'ฐานลดลงเหลือ:';
+            if (barLabelB) {
+                barLabelB.innerHTML = `ม.39 (ทางเลือก B) - ส่งฐาน 4,800 ทันทีหลังออกจากงาน <span id="bar-m39-b-years-label">${data.m39BYears}</span> ปี <span class="text-danger">(Section 39 Trap)</span>`;
+            }
+        } else {
+            if (bCard) {
+                bCard.className = 'card metric-card scenario-b-card';
+                bCard.style.borderColor = '#f59e0b';
+            }
+            if (badgeB) {
+                badgeB.className = 'card-badge';
+                badgeB.style.background = 'linear-gradient(135deg, #f59e0b, #d97706)';
+                badgeB.style.color = 'white';
+                badgeB.textContent = 'ม.39 (ทางเลือก B) - ฐานผสม';
+            }
+            if (lblBAvg) lblBAvg.textContent = 'ฐานเฉลี่ยผสม:';
+            if (barLabelB) {
+                barLabelB.innerHTML = `ม.39 (ทางเลือก B) - ส่งฐาน 4,800 ทันทีหลังออกจากงาน <span id="bar-m39-b-years-label">${data.m39BYears}</span> ปี (ฐานเฉลี่ยผสม)`;
+            }
+        }
     }
 
     // 2. Update Charts
-    const maxVal = Math.max(data.standardPension, data.m39APension, data.m39BPension, 100);
+    const chartStdVal = data.totalMonths >= 180 ? data.standardPension : 0;
+    const chartM39AVal = data.totalMonths >= 180 ? data.m39APension : 0;
+    const chartM39BVal = data.totalMonthsB >= 180 ? data.m39BPension : 0;
+
+    const maxVal = Math.max(chartStdVal, chartM39AVal, chartM39BVal, 100);
     
-    const stdWidth = (data.standardPension / maxVal) * 100;
-    const m39AWidth = (data.m39APension / maxVal) * 100;
-    const m39BWidth = (data.m39BPension / maxVal) * 100;
+    const stdWidth = maxVal > 100 ? (chartStdVal / maxVal) * 100 : 0;
+    const m39AWidth = maxVal > 100 ? (chartM39AVal / maxVal) * 100 : 0;
+    const m39BWidth = maxVal > 100 ? (chartM39BVal / maxVal) * 100 : 0;
 
     barStandard.style.width = `${stdWidth}%`;
     barM39A.style.width = `${m39AWidth}%`;
     barM39B.style.width = `${m39BWidth}%`;
 
-    barValStandard.textContent = formatCurrency(data.standardPension);
-    barValM39A.textContent = formatCurrency(data.m39APension);
-    barValM39B.textContent = formatCurrency(data.m39BPension);
+    barValStandard.textContent = data.totalMonths >= 180 ? formatCurrency(data.standardPension) : "บำเหน็จชราภาพ (ไม่มีบำนาญ)";
+    barValM39A.textContent = data.totalMonths >= 180 ? formatCurrency(data.m39APension) : "ไม่เข้าเงื่อนไข";
+    barValM39B.textContent = data.totalMonthsB >= 180 ? formatCurrency(data.m39BPension) : "บำเหน็จชราภาพ (ไม่มีบำนาญ)";
 
     // 3. Update Calculation Explanations for all Options
     
@@ -520,38 +602,51 @@ function updateUI(data) {
         stdDetailCalc.innerHTML = `${formatNumber(data.avgSalary)} บาท × ${data.pensionPct.toFixed(1)}% = <strong>${formatCurrency(data.standardPension)} บาท/เดือน</strong>`;
     } else {
         stdDetailMonths.innerHTML = `${data.totalMonths} งวด <span class="text-danger">(ส่งเงินสมทบไม่ครบ 180 งวด)</span>`;
-        stdDetailRate.innerHTML = `ได้รับเงินบำเหน็จ (สะสมชราภาพ)`;
-        stdDetailAvgFormula.innerHTML = `ไม่มีสิทธิรับบำนาญรายเดือน`;
-        stdDetailCalc.innerHTML = `จะได้รับเงินบำเหน็จสะสมก้อนเดียวตามจริง`;
+        stdDetailRate.innerHTML = `<strong>ได้รับเงินบำเหน็จชราภาพ (จ่ายครั้งเดียว)</strong>`;
+        stdDetailAvgFormula.innerHTML = `คำนวณตามเกณฑ์: ${data.totalMonths >= 12 ? 'เงินออมสะสมผู้ประกันตน + ส่วนของนายจ้างสมทบ + ผลประโยชน์ตอบแทนประจำปีสะสม' : 'เงินสะสมเฉพาะส่วนของผู้ประกันตน'}`;
+        stdDetailCalc.innerHTML = `<span class="text-warning"><i class="fas fa-info-circle"></i> โปรดตรวจสอบยอดเงินบำเหน็จสะสมสุทธิจากแอป SSO Plus หรือเว็บไซต์ประกันสังคม</span>`;
     }
 
     // Option A
-    m39aDetailRate.innerHTML = `${data.pensionPct.toFixed(1)}% (อัตราบำนาญ ม.33 เดิม) + (${data.m39AYears} ปี ม.39 × 1.5%) = <strong>${data.m39APct.toFixed(1)}%</strong>`;
-    m39aDetailAvg.innerHTML = `คงฐานเดิมที่ดีที่สุดก่อนสมัคร ม.39 คือ <strong>${formatNumber(data.avgSalary)} บาท</strong>`;
-    m39aDetailCalc.innerHTML = `${formatNumber(data.avgSalary)} บาท × ${data.m39APct.toFixed(1)}% = <strong>${formatCurrency(data.m39APension)} บาท/เดือน</strong>`;
+    if (data.totalMonths >= 180) {
+        m39aDetailRate.innerHTML = `${data.pensionPct.toFixed(1)}% (อัตราบำนาญ ม.33 เดิม) + (${data.m39AYears} ปี ม.39 × 1.5%) = <strong>${data.m39APct.toFixed(1)}%</strong>`;
+        m39aDetailAvg.innerHTML = `คงฐานเดิมที่ดีที่สุดก่อนสมัคร ม.39 คือ <strong>${formatNumber(data.avgSalary)} บาท</strong>`;
+        m39aDetailCalc.innerHTML = `${formatNumber(data.avgSalary)} บาท × ${data.m39APct.toFixed(1)}% = <strong>${formatCurrency(data.m39APension)} บาท/เดือน</strong>`;
+    } else {
+        m39aDetailRate.innerHTML = `<span class="text-danger">ไม่เข้าเกณฑ์</span>`;
+        m39aDetailAvg.innerHTML = `ต้องได้รับสิทธิบำนาญปกติก่อนจึงจะคำนวณบวกเพิ่มได้`;
+        m39aDetailCalc.innerHTML = `ไม่มีสิทธิคำนวณทางเลือก A`;
+    }
 
     // Option B
-    m39bDetailMonths.innerHTML = `${data.totalMonths} (ม.33) + ${data.m39BMonths} (ม.39) = <strong>${data.totalMonthsB} งวด</strong> <span class="text-success">(ส่งเงินสมทบเกิน 180 งวด มา ${Math.max(data.totalMonthsB - 180, 0)} งวด คิดเป็น ${Math.floor(Math.max(data.totalMonthsB - 180, 0) / 12)} ปีที่เกิน)</span>`;
-    
-    const excessMonthsB = Math.max(data.totalMonthsB - 180, 0);
-    const excessYearsB = Math.floor(excessMonthsB / 12);
-    m39bDetailRate.innerHTML = `20% (15 ปีแรก) + (${excessYearsB} ปีที่เกิน × 1.5%) = <strong>${data.pensionPctB.toFixed(1)}%</strong>`;
-    
-    // Calculate display of mixed formula dynamically
-    let formulaString = '';
-    if (data.m39BMonths > 0) {
-        formulaString += `(4,800 บาท × ${data.m39BMonths} เดือน)`;
-    }
-    if (data.s33MonthsToUse > 0) {
-        // Find the sum of Section 33 portion
-        let sumS33 = 0;
-        for (let i = 0; i < data.s33MonthsToUse; i++) {
-            sumS33 += data.monthsTimeline[i].wage;
+    if (data.totalMonthsB >= 180) {
+        m39bDetailMonths.innerHTML = `${data.totalMonths} (ม.33) + ${data.m39BMonths} (ม.39) = <strong>${data.totalMonthsB} งวด</strong> <span class="text-success">(ส่งเงินสมทบรวมเกิน 180 งวด มา ${Math.max(data.totalMonthsB - 180, 0)} งวด คิดเป็น ${Math.floor(Math.max(data.totalMonthsB - 180, 0) / 12)} ปีที่เกิน)</span>`;
+        
+        const excessMonthsB = Math.max(data.totalMonthsB - 180, 0);
+        const excessYearsB = Math.floor(excessMonthsB / 12);
+        m39bDetailRate.innerHTML = `20% (15 ปีแรก) + (${excessYearsB} ปีที่เกิน × 1.5%) = <strong>${data.pensionPctB.toFixed(1)}%</strong>`;
+        
+        // Calculate display of mixed formula dynamically
+        let formulaString = '';
+        if (data.m39BMonths > 0) {
+            formulaString += `(4,800 บาท × ${data.m39BMonths} เดือน)`;
         }
-        formulaString += (formulaString ? ' + ' : '') + `(${formatNumber(sumS33 / data.s33MonthsToUse)} บาท × ${data.s33MonthsToUse} เดือน)`;
+        if (data.s33MonthsToUse > 0) {
+            // Find the sum of Section 33 portion
+            let sumS33 = 0;
+            for (let i = 0; i < data.s33MonthsToUse; i++) {
+                sumS33 += data.monthsTimeline[i].wage;
+            }
+            formulaString += (formulaString ? ' + ' : '') + `(${formatNumber(sumS33 / data.s33MonthsToUse)} บาท × ${data.s33MonthsToUse} เดือน)`;
+        }
+        m39bDetailAvgFormula.innerHTML = `${formulaString} = ${formatNumber(data.avgSalaryB * 60)} / 60 เดือน = <strong>${formatNumber(data.avgSalaryB)} บาท</strong>`;
+        m39bDetailCalc.innerHTML = `${formatNumber(data.avgSalaryB)} บาท × ${data.pensionPctB.toFixed(1)}% = <strong>${formatCurrency(data.m39BPension)} บาท/เดือน</strong>`;
+    } else {
+        m39bDetailMonths.innerHTML = `${data.totalMonths} (ม.33) + ${data.m39BMonths} (ม.39) = <strong>${data.totalMonthsB} งวด</strong> <span class="text-danger">(ส่งรวมสะสมไม่ครบ 180 งวด)</span>`;
+        m39bDetailRate.innerHTML = `<strong>ได้รับเงินบำเหน็จชราภาพ (จ่ายครั้งเดียว)</strong>`;
+        m39bDetailAvgFormula.innerHTML = `ไม่มีสิทธิรับบำนาญรายเดือน`;
+        m39bDetailCalc.innerHTML = `จะได้รับเงินบำเหน็จสะสมรวมก้อนเดียวตามจริงของ ม.33 และ ม.39`;
     }
-    m39bDetailAvgFormula.innerHTML = `${formulaString} = ${formatNumber(data.avgSalaryB * 60)} / 60 เดือน = <strong>${formatNumber(data.avgSalaryB)} บาท</strong>`;
-    m39bDetailCalc.innerHTML = `${formatNumber(data.avgSalaryB)} บาท × ${data.pensionPctB.toFixed(1)}% = <strong>${formatCurrency(data.m39BPension)} บาท/เดือน</strong>`;
 
     // 4. Update the 60 Months Timeline Table
     timelineBody.innerHTML = '';

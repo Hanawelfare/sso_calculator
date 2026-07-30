@@ -1,0 +1,852 @@
+/* CSS Custom Properties for Theming */
+:root {
+    --bg-primary: #f0f2f5;
+    --bg-secondary: #ffffff;
+    --bg-panel: rgba(255, 255, 255, 0.8);
+    --border-color: rgba(0, 0, 0, 0.08);
+    
+    --text-primary: #1e293b;
+    --text-secondary: #64748b;
+    --text-light: #94a3b8;
+    
+    --primary-color: #0f4c81;
+    --primary-light: rgba(15, 76, 129, 0.1);
+    --primary-gradient: linear-gradient(135deg, #0f4c81, #1d72b8);
+    
+    --success-color: #10b981;
+    --success-gradient: linear-gradient(135deg, #059669, #10b981);
+    --success-light: rgba(16, 185, 129, 0.1);
+    
+    --danger-color: #ef4444;
+    --danger-gradient: linear-gradient(135deg, #dc2626, #ef4444);
+    --danger-light: rgba(239, 68, 68, 0.1);
+    
+    --warning-color: #f59e0b;
+    --warning-light: rgba(245, 158, 11, 0.1);
+    
+    --card-shadow: 0 8px 32px 0 rgba(31, 38, 135, 0.05);
+    --panel-shadow: 0 10px 40px -10px rgba(0, 0, 0, 0.05);
+    --glass-blur: blur(12px);
+    
+    --transition-speed: 0.3s;
+}
+
+/* Dark Theme Variables */
+[data-theme="dark"] {
+    --bg-primary: #0b1329;
+    --bg-secondary: #1c2541;
+    --bg-panel: rgba(28, 37, 65, 0.85);
+    --border-color: rgba(255, 255, 255, 0.08);
+    
+    --text-primary: #f1f5f9;
+    --text-secondary: #94a3b8;
+    --text-light: #64748b;
+    
+    --primary-color: #3b82f6;
+    --primary-light: rgba(59, 130, 246, 0.15);
+    --primary-gradient: linear-gradient(135deg, #2563eb, #3b82f6);
+    
+    --success-color: #34d399;
+    --success-gradient: linear-gradient(135deg, #059669, #34d399);
+    --success-light: rgba(52, 211, 153, 0.15);
+    
+    --danger-color: #f87171;
+    --danger-gradient: linear-gradient(135deg, #dc2626, #f87171);
+    --danger-light: rgba(248, 113, 113, 0.15);
+    
+    --warning-color: #fbbf24;
+    --warning-light: rgba(251, 191, 36, 0.15);
+    
+    --card-shadow: 0 8px 32px 0 rgba(0, 0, 0, 0.3);
+    --panel-shadow: 0 10px 40px -10px rgba(0, 0, 0, 0.5);
+}
+
+/* Reset and Global Styles */
+* {
+    box-sizing: border-box;
+    margin: 0;
+    padding: 0;
+}
+
+body {
+    font-family: 'Sarabun', 'Inter', -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
+    background-color: var(--bg-primary);
+    color: var(--text-primary);
+    min-height: 100vh;
+    display: flex;
+    justify-content: center;
+    align-items: flex-start;
+    padding: 2rem 1rem;
+    transition: background-color var(--transition-speed), color var(--transition-speed);
+}
+
+.app-container {
+    width: 100%;
+    max-width: 1400px;
+    position: relative;
+}
+
+/* Theme Toggle Button */
+.theme-btn {
+    position: absolute;
+    top: 0;
+    right: 0;
+    background: var(--bg-secondary);
+    border: 1px solid var(--border-color);
+    color: var(--text-primary);
+    width: 45px;
+    height: 45px;
+    border-radius: 50%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    cursor: pointer;
+    box-shadow: var(--card-shadow);
+    transition: all var(--transition-speed);
+    z-index: 10;
+}
+
+.theme-btn:hover {
+    transform: scale(1.1);
+    background-color: var(--primary-light);
+    color: var(--primary-color);
+}
+
+/* Header Styles */
+.app-header {
+    margin-bottom: 2.5rem;
+    text-align: center;
+    padding-right: 50px; /* Space for theme button on smaller layouts */
+}
+
+.logo-area {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 12px;
+    margin-bottom: 8px;
+}
+
+.sso-badge {
+    background: var(--primary-gradient);
+    color: white;
+    font-family: 'Inter', sans-serif;
+    font-weight: 800;
+    font-size: 1.2rem;
+    padding: 6px 14px;
+    border-radius: 8px;
+    letter-spacing: 1px;
+    box-shadow: 0 4px 10px rgba(15, 76, 129, 0.3);
+}
+
+.app-header h1 {
+    font-size: 2.2rem;
+    font-weight: 700;
+    background: var(--primary-gradient);
+    -webkit-background-clip: text;
+    -webkit-text-fill-color: transparent;
+}
+
+.subtitle {
+    color: var(--text-secondary);
+    font-size: 1.1rem;
+    font-weight: 400;
+}
+
+/* Dashboard Grid Layout */
+.dashboard-grid {
+    display: grid;
+    grid-template-columns: 420px 1fr;
+    gap: 2rem;
+    align-items: start;
+}
+
+/* Glassmorphic Panel Design */
+.panel {
+    background-color: var(--bg-panel);
+    border: 1px solid var(--border-color);
+    backdrop-filter: var(--glass-blur);
+    -webkit-backdrop-filter: var(--glass-blur);
+    border-radius: 20px;
+    padding: 2rem;
+    box-shadow: var(--panel-shadow);
+    transition: background-color var(--transition-speed), border var(--transition-speed);
+}
+
+.panel-header {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+    margin-bottom: 1.5rem;
+    border-bottom: 1px solid var(--border-color);
+    padding-bottom: 1rem;
+}
+
+.panel-header i {
+    color: var(--primary-color);
+    font-size: 1.5rem;
+}
+
+.panel-header h2 {
+    font-size: 1.3rem;
+    font-weight: 600;
+    color: var(--text-primary);
+}
+
+/* Card General Design */
+.card {
+    background: var(--bg-secondary);
+    border: 1px solid var(--border-color);
+    border-radius: 16px;
+    padding: 1.5rem;
+    box-shadow: var(--card-shadow);
+    margin-bottom: 1.5rem;
+    transition: transform var(--transition-speed), box-shadow var(--transition-speed), border-color var(--transition-speed);
+}
+
+.card:hover {
+    transform: translateY(-2px);
+    box-shadow: 0 12px 40px rgba(0,0,0,0.08);
+}
+
+/* Form Styles */
+.calc-form {
+    display: flex;
+    flex-direction: column;
+    gap: 1.25rem;
+}
+
+.form-group {
+    display: flex;
+    flex-direction: column;
+    gap: 6px;
+}
+
+.form-group label {
+    font-size: 0.95rem;
+    font-weight: 500;
+    color: var(--text-primary);
+}
+
+.form-input {
+    background: var(--bg-secondary);
+    border: 1px solid var(--border-color);
+    color: var(--text-primary);
+    padding: 10px 14px;
+    font-size: 1rem;
+    border-radius: 8px;
+    font-family: inherit;
+    outline: none;
+    transition: all var(--transition-speed);
+}
+
+.form-input:focus {
+    border-color: var(--primary-color);
+    box-shadow: 0 0 0 3px var(--primary-light);
+}
+
+.form-row {
+    display: flex;
+    gap: 12px;
+}
+
+.date-select-group {
+    display: grid;
+    grid-template-columns: 3fr 2fr;
+    gap: 8px;
+}
+
+.year-input {
+    text-align: center;
+}
+
+.helper-text {
+    font-size: 0.8rem;
+    color: var(--text-secondary);
+}
+
+.input-with-btn {
+    display: grid;
+    grid-template-columns: 1fr auto;
+    gap: 8px;
+}
+
+/* Buttons */
+.btn {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    gap: 8px;
+    font-family: inherit;
+    font-size: 0.95rem;
+    font-weight: 500;
+    padding: 10px 16px;
+    border-radius: 8px;
+    border: none;
+    cursor: pointer;
+    transition: all var(--transition-speed);
+}
+
+.btn-secondary {
+    background: var(--primary-light);
+    color: var(--primary-color);
+    border: 1px solid rgba(15, 76, 129, 0.15);
+}
+
+.btn-secondary:hover {
+    background: var(--primary-color);
+    color: white;
+}
+
+.btn-sm {
+    padding: 6px 12px;
+    font-size: 0.85rem;
+}
+
+/* Config Sub-Card */
+.config-card {
+    background: var(--bg-primary);
+    border-radius: 12px;
+    padding: 1rem;
+    border: 1px dashed var(--border-color);
+    margin-top: 5px;
+}
+
+.config-card h3 {
+    font-size: 0.9rem;
+    font-weight: 600;
+    color: var(--text-secondary);
+    margin-bottom: 10px;
+    display: flex;
+    align-items: center;
+    gap: 6px;
+}
+
+.config-row {
+    display: flex;
+    gap: 10px;
+    margin-bottom: 8px;
+}
+
+.config-row:last-child {
+    margin-bottom: 0;
+}
+
+.config-col {
+    flex: 1;
+    display: flex;
+    flex-direction: column;
+    gap: 4px;
+}
+
+.config-col-full {
+    width: 100%;
+    display: flex;
+    flex-direction: column;
+    gap: 4px;
+}
+
+.config-card label {
+    font-size: 0.8rem;
+    color: var(--text-secondary);
+}
+
+.config-card .form-input {
+    padding: 6px 10px;
+    font-size: 0.85rem;
+}
+
+/* Custom wages toggle & grid */
+.toggle-container {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+    margin-top: 10px;
+}
+
+.toggle-label {
+    font-size: 0.95rem;
+    font-weight: 500;
+    color: var(--text-primary);
+}
+
+/* Switch UI */
+.switch {
+    position: relative;
+    display: inline-block;
+    width: 48px;
+    height: 24px;
+}
+
+.switch input {
+    opacity: 0;
+    width: 0;
+    height: 0;
+}
+
+.slider {
+    position: absolute;
+    cursor: pointer;
+    top: 0;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    background-color: var(--text-light);
+    transition: .4s;
+}
+
+.slider:before {
+    position: absolute;
+    content: "";
+    height: 16px;
+    width: 16px;
+    left: 4px;
+    bottom: 4px;
+    background-color: white;
+    transition: .4s;
+}
+
+input:checked + .slider {
+    background-color: var(--primary-color);
+}
+
+input:checked + .slider:before {
+    transform: translateX(24px);
+}
+
+.slider.round {
+    border-radius: 34px;
+}
+
+.slider.round:before {
+    border-radius: 50%;
+}
+
+/* Custom Wages Box */
+.custom-wages-section {
+    border-top: 1px solid var(--border-color);
+    padding-top: 1rem;
+    margin-top: 0.5rem;
+}
+
+.custom-wages-section h4 {
+    font-size: 0.95rem;
+    font-weight: 600;
+    margin-bottom: 10px;
+}
+
+.custom-wages-bulk {
+    display: flex;
+    gap: 8px;
+    margin-bottom: 12px;
+}
+
+.wages-grid {
+    display: grid;
+    grid-template-columns: repeat(3, 1fr);
+    gap: 8px;
+    max-height: 260px;
+    overflow-y: auto;
+    padding-right: 4px;
+    border: 1px solid var(--border-color);
+    border-radius: 8px;
+    padding: 8px;
+    background: var(--bg-primary);
+}
+
+.wage-month-input {
+    display: flex;
+    flex-direction: column;
+    gap: 2px;
+}
+
+.wage-month-input label {
+    font-size: 0.75rem;
+    color: var(--text-secondary);
+    text-align: center;
+}
+
+.wage-month-input input {
+    padding: 6px;
+    font-size: 0.85rem;
+    text-align: center;
+    border-radius: 6px;
+}
+
+.hidden {
+    display: none !important;
+}
+
+/* Right Panel: Results View */
+.results-panel {
+    display: flex;
+    flex-direction: column;
+    gap: 1.5rem;
+}
+
+/* KPI Cards Layout */
+.metrics-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(240px, 1fr));
+    gap: 1.5rem;
+}
+
+.metric-card {
+    position: relative;
+    overflow: hidden;
+    display: flex;
+    flex-direction: column;
+    justify-content: space-between;
+    min-height: 190px;
+    border-radius: 20px;
+}
+
+.card-badge {
+    position: absolute;
+    top: 12px;
+    right: 12px;
+    padding: 4px 10px;
+    border-radius: 20px;
+    font-size: 0.75rem;
+    font-weight: 600;
+    color: white;
+}
+
+.bg-primary {
+    background: var(--primary-gradient);
+}
+
+.bg-success {
+    background: var(--success-gradient);
+}
+
+.bg-danger {
+    background: var(--danger-gradient);
+}
+
+.metric-value {
+    font-size: 2.2rem;
+    font-weight: 700;
+    margin-top: 1.8rem;
+    margin-bottom: 2px;
+    font-family: 'Inter', sans-serif;
+    color: var(--primary-color);
+}
+
+.standard-card .metric-value {
+    color: var(--primary-color);
+}
+
+.scenario-a-card .metric-value {
+    color: var(--success-color);
+}
+
+.scenario-b-card .metric-value {
+    color: var(--danger-color);
+}
+
+.metric-label {
+    font-size: 0.9rem;
+    color: var(--text-secondary);
+    margin-bottom: 1.5rem;
+    font-weight: 500;
+}
+
+.metric-details {
+    display: flex;
+    justify-content: space-between;
+    border-top: 1px solid var(--border-color);
+    padding-top: 10px;
+    margin-top: auto;
+    font-size: 0.8rem;
+}
+
+.detail-item {
+    display: flex;
+    flex-direction: column;
+}
+
+.detail-item .lbl {
+    color: var(--text-light);
+}
+
+.detail-item .val {
+    font-weight: 600;
+    font-size: 0.9rem;
+    color: var(--text-primary);
+}
+
+/* Active Highlight for Metric Cards */
+.active-card {
+    border: 2px solid var(--primary-color);
+    box-shadow: 0 8px 30px rgba(15, 76, 129, 0.15);
+}
+
+.warning-card {
+    border: 1px dashed var(--danger-color);
+}
+
+/* Chart Card and Bar Layout */
+.chart-card h3, .details-card h3 {
+    font-size: 1.15rem;
+    font-weight: 600;
+    margin-bottom: 1.5rem;
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    color: var(--text-primary);
+}
+
+.chart-card h3 i, .details-card h3 i {
+    color: var(--primary-color);
+}
+
+.bar-chart-container {
+    display: flex;
+    flex-direction: column;
+    gap: 1.25rem;
+    margin-bottom: 1.5rem;
+}
+
+.chart-bar-group {
+    display: flex;
+    flex-direction: column;
+    gap: 6px;
+}
+
+.bar-label {
+    font-size: 0.85rem;
+    font-weight: 500;
+    color: var(--text-secondary);
+}
+
+.bar-wrapper {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+    background: var(--bg-primary);
+    border-radius: 30px;
+    padding: 4px;
+    height: 36px;
+    position: relative;
+}
+
+.bar {
+    height: 100%;
+    border-radius: 30px;
+    transition: width 1s cubic-bezier(0.1, 0.8, 0.3, 1);
+    min-width: 10%;
+}
+
+.bar-value {
+    position: absolute;
+    right: 15px;
+    font-family: 'Inter', sans-serif;
+    font-weight: 700;
+    font-size: 0.9rem;
+    color: var(--text-primary);
+}
+
+.text-danger-group .bar-value {
+    color: var(--danger-color);
+}
+
+/* Alert Box */
+.alert-box {
+    display: flex;
+    gap: 12px;
+    padding: 1rem;
+    border-radius: 12px;
+    font-size: 0.9rem;
+    line-height: 1.5;
+}
+
+.alert-warning {
+    background-color: var(--warning-light);
+    border: 1px solid var(--warning-color);
+    color: var(--text-primary);
+}
+
+.alert-warning i {
+    color: var(--warning-color);
+    font-size: 1.25rem;
+    margin-top: 2px;
+}
+
+/* Details and Calculation Explanations */
+.math-breakdown {
+    display: flex;
+    flex-direction: column;
+    gap: 12px;
+    background: var(--bg-primary);
+    padding: 1.25rem;
+    border-radius: 12px;
+    margin-bottom: 1.5rem;
+}
+
+.math-item {
+    display: flex;
+    flex-direction: column;
+    gap: 4px;
+}
+
+.math-title {
+    font-size: 0.85rem;
+    color: var(--text-secondary);
+    font-weight: 600;
+}
+
+.math-result {
+    font-size: 0.95rem;
+    font-weight: 500;
+    color: var(--text-primary);
+}
+
+.math-formula-box {
+    background: var(--bg-secondary);
+    border: 1px solid var(--border-color);
+    padding: 8px 12px;
+    border-radius: 6px;
+    font-family: 'Inter', 'Sarabun', monospace;
+    font-size: 0.9rem;
+    font-weight: 600;
+    color: var(--primary-color);
+    margin-top: 4px;
+}
+
+/* 60 Months Scrollable Table */
+.timeline-container h4 {
+    font-size: 1rem;
+    font-weight: 600;
+    margin-bottom: 10px;
+    display: flex;
+    align-items: center;
+    gap: 8px;
+}
+
+.timeline-container h4 i {
+    color: var(--text-secondary);
+}
+
+.table-scroll {
+    max-height: 350px;
+    overflow-y: auto;
+    border: 1px solid var(--border-color);
+    border-radius: 10px;
+}
+
+.timeline-table {
+    width: 100%;
+    border-collapse: collapse;
+    text-align: left;
+    font-size: 0.85rem;
+}
+
+.timeline-table th {
+    background: var(--bg-primary);
+    color: var(--text-secondary);
+    padding: 12px;
+    font-weight: 600;
+    position: sticky;
+    top: 0;
+    z-index: 1;
+    border-bottom: 2px solid var(--border-color);
+}
+
+.timeline-table td {
+    padding: 10px 12px;
+    border-bottom: 1px solid var(--border-color);
+    color: var(--text-primary);
+}
+
+.timeline-table tr:hover {
+    background: rgba(15, 76, 129, 0.03);
+}
+
+/* Status Badges inside Table */
+.status-pill {
+    display: inline-block;
+    padding: 2px 8px;
+    border-radius: 12px;
+    font-size: 0.75rem;
+    font-weight: 600;
+}
+
+.status-pill.m33 {
+    background-color: var(--primary-light);
+    color: var(--primary-color);
+}
+
+.status-pill.m39 {
+    background-color: var(--danger-light);
+    color: var(--danger-color);
+}
+
+/* Scrollbar Customization */
+::-webkit-scrollbar {
+    width: 6px;
+    height: 6px;
+}
+
+::-webkit-scrollbar-track {
+    background: transparent;
+}
+
+::-webkit-scrollbar-thumb {
+    background: var(--text-light);
+    border-radius: 10px;
+}
+
+::-webkit-scrollbar-thumb:hover {
+    background: var(--text-secondary);
+}
+
+/* Footer Section */
+.app-footer {
+    margin-top: 3rem;
+    text-align: center;
+    color: var(--text-light);
+    font-size: 0.85rem;
+    border-top: 1px solid var(--border-color);
+    padding-top: 1.5rem;
+}
+
+/* Responsive Styles */
+@media (max-width: 1100px) {
+    .dashboard-grid {
+        grid-template-columns: 1fr;
+    }
+    
+    .input-panel {
+        position: relative;
+    }
+}
+
+@media (max-width: 768px) {
+    body {
+        padding: 1rem 0.5rem;
+    }
+    
+    .panel {
+        padding: 1.25rem;
+    }
+    
+    .metrics-grid {
+        grid-template-columns: 1fr;
+        gap: 1rem;
+    }
+    
+    .metric-card {
+        min-height: auto;
+        padding: 1.25rem;
+    }
+    
+    .metric-value {
+        margin-top: 1rem;
+        font-size: 1.8rem;
+    }
+    
+    .wages-grid {
+        grid-template-columns: repeat(2, 1fr);
+    }
+}

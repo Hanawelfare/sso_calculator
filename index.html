@@ -1,0 +1,367 @@
+<!DOCTYPE html>
+<html lang="th">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>ระบบคำนวณเงินชราภาพ ประกันสังคม - SSO Old-Age Pension Calculator</title>
+    <!-- Google Fonts: Sarabun & Inter -->
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&family=Sarabun:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="styles.css">
+    <!-- FontAwesome for Icons -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+</head>
+<body>
+    <div class="app-container">
+        <!-- Theme Toggle -->
+        <button id="theme-toggle" class="theme-btn" title="เปลี่ยนธีม">
+            <i class="fas fa-moon"></i>
+        </button>
+
+        <header class="app-header">
+            <div class="logo-area">
+                <div class="sso-badge">SSO</div>
+                <h1>ระบบคำนวณเงินบำนาญชราภาพ</h1>
+            </div>
+            <p class="subtitle">คำนวณเงินบำนาญตามหลักเกณฑ์ประกันสังคม พร้อมเปรียบเทียบกรณีส่งต่อ ม.39</p>
+        </header>
+
+        <main class="dashboard-grid">
+            <!-- Left Panel: Inputs & Configurations -->
+            <section class="panel input-panel">
+                <div class="panel-header">
+                    <i class="fas fa-sliders-h"></i>
+                    <h2>ระบุข้อมูลผู้ประกันตน</h2>
+                </div>
+
+                <form id="calc-form" class="calc-form">
+                    <!-- Date Selection -->
+                    <div class="form-row date-row">
+                        <div class="form-group">
+                            <label for="start-month">月 เดือนที่เริ่มส่งงวดแรก</label>
+                            <div class="date-select-group">
+                                <select id="start-month" class="form-input">
+                                    <option value="0">มกราคม</option>
+                                    <option value="1">กุมภาพันธ์</option>
+                                    <option value="2">มีนาคม</option>
+                                    <option value="3">เมษายน</option>
+                                    <option value="4">พฤษภาคม</option>
+                                    <option value="5">มิถุนายน</option>
+                                    <option value="6">กรกฎาคม</option>
+                                    <option value="7">สิงหาคม</option>
+                                    <option value="8">กันยายน</option>
+                                    <option value="9">ตุลาคม</option>
+                                    <option value="10">พฤศจิกายน</option>
+                                    <option value="11">ธันวาคม</option>
+                                </select>
+                                <input type="number" id="start-year" class="form-input year-input" value="2542" min="2542" max="2600" title="ปี พ.ศ.">
+                            </div>
+                            <small class="helper-text">* เริ่มส่งเดือนแรกตั้งแต่ปี พ.ศ. 2542</small>
+                        </div>
+                    </div>
+
+                    <div class="form-row date-row">
+                        <div class="form-group">
+                            <label for="retire-month">เดือนที่เกษียณ/ส่งงวดสุดท้าย</label>
+                            <div class="date-select-group">
+                                <select id="retire-month" class="form-input">
+                                    <option value="0">มกราคม</option>
+                                    <option value="1">กุมภาพันธ์</option>
+                                    <option value="2">มีนาคม</option>
+                                    <option value="3">เมษายน</option>
+                                    <option value="4">พฤษภาคม</option>
+                                    <option value="5" selected>มิถุนายน</option>
+                                    <option value="6">กรกฎาคม</option>
+                                    <option value="7">สิงหาคม</option>
+                                    <option value="8">กันยายน</option>
+                                    <option value="9">ตุลาคม</option>
+                                    <option value="10">พฤศจิกายน</option>
+                                    <option value="11">ธันวาคม</option>
+                                </select>
+                                <input type="number" id="retire-year" class="form-input year-input" value="2569" min="2542" max="2600" title="ปี พ.ศ.">
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Contribution Months -->
+                    <div class="form-group">
+                        <label for="total-months">จำนวนงวดที่ส่งเข้าประกันสังคมทั้งหมด (เดือน)</label>
+                        <div class="input-with-btn">
+                            <input type="number" id="total-months" class="form-input" value="325" min="1" max="600">
+                            <button type="button" id="btn-calc-months" class="btn btn-secondary" title="คำนวณงวดทั้งหมดจากช่วงเวลา">
+                                <i class="fas fa-calculator"></i> คำนวณงวด
+                            </button>
+                        </div>
+                    </div>
+
+                    <!-- Wage Base Adjustment Rules -->
+                    <div class="form-group config-card">
+                        <h3><i class="fas fa-cog"></i> ตั้งค่าฐานเงินเดือนเพดานสูงสุด</h3>
+                        
+                        <div class="config-row">
+                            <div class="config-col">
+                                <label for="base-wage-old">เพดานถึงปี 2568 (บาท)</label>
+                                <input type="number" id="base-wage-old" class="form-input" value="15000" step="500">
+                            </div>
+                            <div class="config-col">
+                                <label for="base-wage-new">ปี 2569-2571 (บาท)</label>
+                                <input type="number" id="base-wage-new" class="form-input" value="17500" step="500">
+                            </div>
+                        </div>
+                        <div class="config-row">
+                            <div class="config-col">
+                                <label for="base-wage-20k">ปี 2572-2574 (บาท)</label>
+                                <input type="number" id="base-wage-20k" class="form-input" value="20000" step="500">
+                            </div>
+                            <div class="config-col">
+                                <label for="base-wage-23k">ปี 2575 ขึ้นไป (บาท)</label>
+                                <input type="number" id="base-wage-23k" class="form-input" value="23000" step="500">
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Section 39 Option A years input -->
+                    <div class="form-group config-card">
+                        <h3><i class="fas fa-hand-holding-usd"></i> ทางเลือก A (ส่ง ม.39 หลังรับบำนาญ)</h3>
+                        <div class="config-row">
+                            <div class="config-col-full">
+                                <label for="m39-a-years">จำนวนปีที่ส่ง ม.39 ต่อ (ปี)</label>
+                                <input type="number" id="m39-a-years" class="form-input" value="5" min="1" max="50">
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Section 39 Option B years input -->
+                    <div class="form-group config-card">
+                        <h3><i class="fas fa-random"></i> ทางเลือก B (ส่ง ม.39 ทันที ก่อนขอรับบำนาญ)</h3>
+                        <div class="config-row">
+                            <div class="config-col-full">
+                                <label for="m39-b-years">จำนวนปีที่ส่ง ม.39 (ปี)</label>
+                                <input type="number" id="m39-b-years" class="form-input" value="5" min="1" max="50">
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Custom Last 60 Months Wages Toggle -->
+                    <div class="form-group">
+                        <div class="toggle-container">
+                            <label class="switch">
+                                <input type="checkbox" id="custom-wages-toggle">
+                                <span class="slider round"></span>
+                            </label>
+                            <span class="toggle-label">กำหนดค่าจ้าง 60 เดือนสุดท้ายด้วยตนเอง</span>
+                        </div>
+                    </div>
+
+                    <!-- Hidden Custom Wages Container -->
+                    <div id="custom-wages-container" class="custom-wages-section hidden">
+                        <h4>ระบุค่าจ้างรายเดือน (60 เดือนสุดท้าย)</h4>
+                        <div class="custom-wages-bulk">
+                            <button type="button" id="btn-fill-max" class="btn btn-sm btn-secondary">ใส่เพดานสูงสุดทุกเดือน</button>
+                            <button type="button" id="btn-fill-m39" class="btn btn-sm btn-secondary">ใส่ฐาน ม.39 (4,800) ทุกเดือน</button>
+                        </div>
+                        <div id="wages-grid" class="wages-grid">
+                            <!-- Dynamically generated month inputs -->
+                        </div>
+                    </div>
+                </form>
+            </section>
+
+            <!-- Right Panel: Dashboard Results -->
+            <section class="results-panel">
+                <!-- Pension Metrics Cards -->
+                <div class="metrics-grid">
+                    <!-- Standard Pension Card -->
+                    <div class="card metric-card standard-card active-card">
+                        <div class="card-badge bg-primary">บำนาญปกติ (ม.33)</div>
+                        <div class="metric-value" id="res-standard-pension">฿5,795</div>
+                        <div class="metric-label">ได้รับเงินบำนาญชราภาพเดือนละ</div>
+                        <div class="metric-details">
+                            <div class="detail-item">
+                                <span class="lbl">คิดเป็นอัตรา:</span>
+                                <span class="val" id="res-standard-pct">38.0%</span>
+                            </div>
+                            <div class="detail-item">
+                                <span class="lbl">ฐานค่าจ้างเฉลี่ย:</span>
+                                <span class="val" id="res-standard-avg">฿15,250</span>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- M.39 Scenario A Card -->
+                    <div class="card metric-card scenario-a-card">
+                        <div class="card-badge bg-success">ม.39 (ทางเลือก A)</div>
+                        <div class="metric-value" id="res-m39-a-pension">฿6,938.75</div>
+                        <div class="metric-label">รับบำนาญแล้ว ส่ง ม.39 ต่อ <span id="res-m39-a-years-label">5</span> ปี</div>
+                        <div class="metric-details">
+                            <div class="detail-item">
+                                <span class="lbl" id="res-m39-a-add-label">รับเพิ่ม (+7.5%):</span>
+                                <span class="val" id="res-m39-a-pct">45.5%</span>
+                            </div>
+                            <div class="detail-item text-success">
+                                <span class="lbl">ฐานเดิมคงไว้:</span>
+                                <span class="val" id="res-m39-a-base">฿15,250</span>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- M.39 Scenario B Card -->
+                    <div class="card metric-card scenario-b-card warning-card" id="card-m39-b">
+                        <div class="card-badge bg-danger" id="badge-m39-b">ม.39 (ทางเลือก B)</div>
+                        <div class="metric-value text-danger" id="res-m39-b-pension">฿2,256</div>
+                        <div class="metric-label">ส่ง ม.39 ทันที <span id="res-m39-b-years-label">5</span> ปี ก่อนขอรับบำนาญ</div>
+                        <div class="metric-details">
+                            <div class="detail-item">
+                                <span class="lbl">อัตรารวม:</span>
+                                <span class="val" id="res-m39-b-pct">47.0%</span>
+                            </div>
+                            <div class="detail-item text-danger" id="wrapper-res-m39-b-avg">
+                                <span class="lbl" id="lbl-m39-b-avg">ฐานเฉลี่ยผสม:</span>
+                                <span class="val" id="res-m39-b-avg">฿4,800</span>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Comparison Graph -->
+                <div class="card chart-card">
+                    <h3><i class="fas fa-chart-bar"></i> เปรียบเทียบเงินบำนาญที่จะได้รับต่อเดือน</h3>
+                    <div class="bar-chart-container">
+                        <div class="chart-bar-group">
+                            <span class="bar-label">บำนาญปกติ (ม.33)</span>
+                            <div class="bar-wrapper">
+                                <div id="bar-standard" class="bar bg-primary" style="width: 80%;"></div>
+                                <span class="bar-value" id="bar-val-standard">฿5,795</span>
+                            </div>
+                        </div>
+                        <div class="chart-bar-group">
+                            <span class="bar-label">ม.39 (ทางเลือก A) - รับบำนาญแล้วต่อ <span id="bar-m39-a-years-label">5</span> ปี</span>
+                            <div class="bar-wrapper">
+                                <div id="bar-m39-a" class="bar bg-success" style="width: 100%;"></div>
+                                <span class="bar-value" id="bar-val-m39-a">฿6,938.75</span>
+                            </div>
+                        </div>
+                        <div class="chart-bar-group text-danger-group" id="chart-group-m39-b">
+                            <span class="bar-label" id="bar-lbl-m39-b">ม.39 (ทางเลือก B) - ส่งฐาน 4,800 ทันที <span id="bar-m39-b-years-label">5</span> ปี ก่อนเกษียณ</span>
+                            <div class="bar-wrapper">
+                                <div id="bar-m39-b" class="bar bg-danger" style="width: 25%;"></div>
+                                <span class="bar-value text-danger" id="bar-val-m39-b">฿1,824</span>
+                            </div>
+                        </div>
+                    </div>
+                    <!-- SSO Section 39 Trap Alert -->
+                    <div class="alert-box alert-warning">
+                        <i class="fas fa-exclamation-triangle"></i>
+                        <div>
+                            <strong>ข้อควรระวัง (Section 39 Trap):</strong> 
+                            หากส่ง ม.39 ต่อเนื่องนานถึง 5 ปีขึ้นไป (60 เดือนเต็ม) ฐานค่าจ้างเฉลี่ย 60 เดือนสุดท้ายของท่านจะลดลงเหลือ 4,800 บาททันที ส่งผลให้บำนาญลดลงอย่างมาก
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Calculation Timeline & Details -->
+                <div class="card details-card">
+                    <h3><i class="fas fa-calculator"></i> รายละเอียดการคำนวณ</h3>
+                    <!-- Details Filters -->
+                    <div class="details-filter-group" style="margin-bottom: 1.5rem; display: flex; flex-wrap: wrap; gap: 15px; background: var(--bg-primary); padding: 12px; border-radius: 10px; border: 1px solid var(--border-color);">
+                        <span style="font-weight: 600; font-size: 0.9rem; width: 100%; margin-bottom: 5px;">แสดงรายละเอียดวิธีคำนวณของ:</span>
+                        <label class="checkbox-container" style="display: flex; align-items: center; gap: 8px; font-size: 0.85rem; font-weight: 500; cursor: pointer;">
+                            <input type="checkbox" id="show-detail-std" checked style="cursor: pointer; width: 16px; height: 16px;"> บำนาญปกติ (ม.33)
+                        </label>
+                        <label class="checkbox-container" style="display: flex; align-items: center; gap: 8px; font-size: 0.85rem; font-weight: 500; cursor: pointer;">
+                            <input type="checkbox" id="show-detail-m39-a" checked style="cursor: pointer; width: 16px; height: 16px;"> ทางเลือก A (+ ม.39 ต่อ)
+                        </label>
+                        <label class="checkbox-container" style="display: flex; align-items: center; gap: 8px; font-size: 0.85rem; font-weight: 500; cursor: pointer;">
+                            <input type="checkbox" id="show-detail-m39-b" checked style="cursor: pointer; width: 16px; height: 16px;"> ทางเลือก B (ม.39 ทันที)
+                        </label>
+                    </div>
+
+                    <!-- Details Blocks -->
+                    <div id="detail-block-std" class="math-breakdown">
+                        <h4 style="color: var(--primary-color); border-bottom: 1px solid var(--border-color); padding-bottom: 6px; margin-bottom: 10px;"><i class="fas fa-certificate"></i> วิธีคำนวณบำนาญปกติ (ม.33)</h4>
+                        <div class="math-item">
+                            <span class="math-title">จำนวนงวดสะสม:</span>
+                            <span class="math-result" id="std-detail-months">-</span>
+                        </div>
+                        <div class="math-item">
+                            <span class="math-title">อัตรารับบำนาญ:</span>
+                            <span class="math-result" id="std-detail-rate">-</span>
+                        </div>
+                        <div class="math-item">
+                            <span class="math-title">สูตรฐานค่าจ้างเฉลี่ย 60 เดือนสุดท้าย:</span>
+                            <div class="math-formula-box" id="std-detail-avg-formula">-</div>
+                        </div>
+                        <div class="math-item">
+                            <span class="math-title">คำนวณบำนาญต่อเดือน:</span>
+                            <div class="math-formula-box" style="background: var(--primary-light); color: var(--primary-color);" id="std-detail-calc">-</div>
+                        </div>
+                    </div>
+
+                    <div id="detail-block-m39-a" class="math-breakdown">
+                        <h4 style="color: var(--success-color); border-bottom: 1px solid var(--border-color); padding-bottom: 6px; margin-bottom: 10px;"><i class="fas fa-hand-holding-usd"></i> วิธีคำนวณ ม.39 (ทางเลือก A)</h4>
+                        <div class="math-item">
+                            <span class="math-title">อัตรารับบำนาญบวกเพิ่ม:</span>
+                            <span class="math-result" id="m39a-detail-rate">-</span>
+                        </div>
+                        <div class="math-item">
+                            <span class="math-title">ฐานค่าจ้างเฉลี่ย:</span>
+                            <span class="math-result" id="m39a-detail-avg">-</span>
+                        </div>
+                        <div class="math-item">
+                            <span class="math-title">คำนวณบำนาญต่อเดือน:</span>
+                            <div class="math-formula-box" style="background: var(--success-light); color: var(--success-color);" id="m39a-detail-calc">-</div>
+                        </div>
+                    </div>
+
+                    <div id="detail-block-m39-b" class="math-breakdown">
+                        <h4 style="color: var(--danger-color); border-bottom: 1px solid var(--border-color); padding-bottom: 6px; margin-bottom: 10px;" id="detail-header-m39-b"><i class="fas fa-exclamation-triangle"></i> วิธีคำนวณ ม.39 (ทางเลือก B)</h4>
+                        <div class="math-item">
+                            <span class="math-title" id="m39b-detail-months-lbl">จำนวนงวดส่งสมทบสะสมใหม่:</span>
+                            <span class="math-result" id="m39b-detail-months">-</span>
+                        </div>
+                        <div class="math-item">
+                            <span class="math-title">อัตรารับบำนาญใหม่:</span>
+                            <span class="math-result" id="m39b-detail-rate">-</span>
+                        </div>
+                        <div class="math-item">
+                            <span class="math-title">สูตรคำนวณฐานเงินเดือนเฉลี่ย 60 เดือนสุดท้าย:</span>
+                            <div class="math-formula-box" id="m39b-detail-avg-formula">-</div>
+                        </div>
+                        <div class="math-item">
+                            <span class="math-title">คำนวณบำนาญต่อเดือน:</span>
+                            <div class="math-formula-box" style="background: var(--danger-light); color: var(--danger-color);" id="m39b-detail-calc">-</div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- 60 Months Table -->
+                <div class="timeline-container">
+                    <h4><i class="far fa-calendar-alt"></i> รายละเอียดค่าจ้างรายเดือนที่นำมาคำนวณ (60 เดือนสุดท้าย)</h4>
+                    <div class="table-scroll">
+                        <table class="timeline-table">
+                            <thead>
+                                <tr>
+                                    <th>ลำดับที่ (ย้อนหลัง)</th>
+                                    <th>เดือน/ปี (พ.ศ.)</th>
+                                    <th>ประเภทผู้ประกันตน</th>
+                                    <th>ฐานค่าจ้างสมทบ (บาท)</th>
+                                </tr>
+                            </thead>
+                            <tbody id="timeline-body">
+                                <!-- Dynamic rows -->
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
+            </section>
+        </main>
+
+        <footer class="app-footer">
+            <p>&copy; 2026 ระบบคำนวณเงินชราภาพตามสิทธิประกันสังคม. พัฒนาขึ้นเพื่อวัตถุประสงค์ในการเปรียบเทียบข้อมูลเชิงสถิติเท่านั้น.</p>
+        </footer>
+    </div>
+
+    <script src="app.js"></script>
+</body>
+</html>

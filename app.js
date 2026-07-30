@@ -6,6 +6,7 @@ const retireMonthSelect = document.getElementById('retire-month');
 const retireYearInput = document.getElementById('retire-year');
 const totalMonthsInput = document.getElementById('total-months');
 const btnCalcMonths = document.getElementById('btn-calc-months');
+const skippedMonthsInput = document.getElementById('skipped-months');
 
 const baseWageOldInput = document.getElementById('base-wage-old');
 const baseWageNewInput = document.getElementById('base-wage-new');
@@ -113,14 +114,15 @@ function autoCalculateMonths() {
 
     const yearsDiff = retireYear - startYear;
     const monthsDiff = retireMonth - startMonth;
-    const totalMonths = (yearsDiff * 12) + monthsDiff + 1;
+    const skippedMonths = parseInt(skippedMonthsInput.value) || 0;
+    const totalMonths = Math.max(0, (yearsDiff * 12) + monthsDiff + 1 - skippedMonths);
 
     totalMonthsInput.value = totalMonths;
 }
 
 function setupEventListeners() {
     // Date inputs trigger auto calculation of months and pension calculation
-    const dateInputs = [startMonthSelect, startYearInput, retireMonthSelect, retireYearInput];
+    const dateInputs = [startMonthSelect, startYearInput, retireMonthSelect, retireYearInput, skippedMonthsInput];
     dateInputs.forEach(input => {
         input.addEventListener('input', () => {
             autoCalculateMonths();

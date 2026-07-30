@@ -473,7 +473,7 @@ function updateUI(data) {
         badgeB.style.color = '';
         badgeB.textContent = 'ม.39 (ทางเลือก B) - Trap!';
         lblBAvg.textContent = 'ฐานลดลงเหลือ:';
-        barLabelB.innerHTML = `ม.39 (ทางเลือก B) - ส่งฐาน 4,800 ทันทีหลังออกจากงาน<span id="bar-m39-b-years-label" class="hidden">${data.m39BYears}</span> <span class="text-danger">(Section 39 Trap)</span>`;
+        barLabelB.innerHTML = `ม.39 (ทางเลือก B) - ส่งฐาน 4,800 ทันทีหลังออกจากงาน <span id="bar-m39-b-years-label">${data.m39BYears}</span> ปี <span class="text-danger">(Section 39 Trap)</span>`;
     } else {
         bCard.className = 'card metric-card scenario-b-card';
         bCard.style.borderColor = '#f59e0b';
@@ -482,7 +482,7 @@ function updateUI(data) {
         badgeB.style.color = 'white';
         badgeB.textContent = 'ม.39 (ทางเลือก B) - ฐานผสม';
         lblBAvg.textContent = 'ฐานเฉลี่ยผสม:';
-        barLabelB.innerHTML = `ม.39 (ทางเลือก B) - ส่งฐาน 4,800 ทันทีหลังออกจากงาน<span id="bar-m39-b-years-label" class="hidden">${data.m39BYears}</span> (ฐานเฉลี่ยผสม)`;
+        barLabelB.innerHTML = `ม.39 (ทางเลือก B) - ส่งฐาน 4,800 ทันทีหลังออกจากงาน <span id="bar-m39-b-years-label">${data.m39BYears}</span> ปี (ฐานเฉลี่ยผสม)`;
     }
 
     // Highlight card depending on totalMonths
